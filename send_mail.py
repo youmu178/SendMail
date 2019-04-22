@@ -11,10 +11,10 @@ from smtplib import SMTP_SSL
 
 # 设置登录及服务器信息
 mail_host = 'smtp.qq.com'
-mail_user = 'xxx@qq.com'
-mail_pass = 'xxxx'
-sender = 'xxx@qq.com'
-receivers = ['xxxx', 'xxx@126.com']
+mail_user = '@qq.com'
+mail_pass = ''
+sender = '@qq.com'
+receivers = ['@.cn']
 
 # 设置eamil信息
 # 添加一个MIMEmultipart类，处理正文及附件

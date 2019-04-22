@@ -3,11 +3,14 @@
 
 import requests
 import json
+import time
+
+import schedule
 
 from send_mail import sendPlanMail
 
-userName = "xxxx"
-password = "xxxx"
+userName = ""
+password = ""
 
 
 def login():
@@ -36,7 +39,7 @@ def getPlanList(token):
             for item in result:
                 text = getPlanItem(token, item.get('plan_id'))
                 info.append(text)
-        sendPlanMail(info)
+        return info
 
 
 def getPlanItem(token, plan_id):
@@ -54,11 +57,29 @@ def getPlanItem(token, plan_id):
             text = plan.get('range_name') + "  方案名称:" + plan.get('expert_name') + "  开始时间:" + plan.get(
                 'effective_time') + "  结束时间:" + plan.get(
                 'deallineTime') + "  方案:" + plan.get('plan_content').replace('<p>', ' ').replace('</p>', ' ').replace(
-                '&nbsp;', '').replace('<br/>', ' ').replace('<span style="white-space: pre;">	</span>', ' ') + '\n \n'
+                '&nbsp;', '').replace('<br/>', ' ').replace('<span style="white-space: pre;">	</span>',
+                                                            ' ') + '\n \n'
             return text
 
 
-if __name__ == '__main__':
+def send():
     token = login()
     if token:
-        getPlanList(token)
+        info = getPlanList(token)
+        sendPlanMail(info)
+
+
+def send_mail_by_schedule():
+    schedule.every(5).minutes.do(send)  # 每5分钟执行一次
+    # schedule.every().hour.do(send)  # 每小时执行一次
+    # schedule.every().day.at("23:00").do(send)  # 每天23:00执行一次
+    # schedule.every().monday.do(send)  # 每周星期一执行一次
+    # schedule.every().wednesday.at("22:15").do(send)  # 每周星期三22:15执行一次
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
+if __name__ == '__main__':
+    send_mail_by_schedule()
